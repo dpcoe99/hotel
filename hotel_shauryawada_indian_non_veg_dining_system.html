@@ -1,0 +1,1778 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hotel Shauryawada - Royal Non-Veg Dining & Management System</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#fff7ed',
+              100: '#ffedd5',
+              200: '#fed7aa',
+              500: '#ea580c', // Spicy Tandoori Orange
+              600: '#c2410c',
+              700: '#9a3412',
+              800: '#7c2d12'
+            },
+            spice: {
+              400: '#fbbf24',
+              500: '#f59e0b', // Turmeric & Saffron Gold
+              600: '#d97706'
+            },
+            curry: {
+              700: '#881337', // Deep Mughlai Curry Crimson
+              800: '#4c0519',
+              900: '#2b030f'
+            },
+            cream: {
+              50: '#fffbf5',
+              100: '#fef3e2',
+              200: '#fde6c6'
+            }
+          },
+          fontFamily: {
+            serif: ['Playfair Display', 'serif'],
+            sans: ['Plus Jakarta Sans', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts & FontAwesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Chart.js for Financial Data Visualization -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    /* Indian Foodie Marquee Animation */
+    @keyframes marquee {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+    .animate-marquee {
+      display: inline-block;
+      white-space: nowrap;
+      animation: marquee 25s linear infinite;
+    }
+    .animate-marquee:hover {
+      animation-play-state: paused;
+    }
+
+    /* Foodie Steam / Smoke Rise Animation */
+    @keyframes steamRise {
+      0% { transform: translateY(0) scaleX(1) opacity: 0.7; }
+      50% { transform: translateY(-10px) scaleX(1.2) opacity: 0.4; }
+      100% { transform: translateY(-20px) scaleX(1.4) opacity: 0; }
+    }
+    .animate-steam {
+      animation: steamRise 3s ease-out infinite;
+    }
+
+    /* Floating Foodie Element Animation */
+    @keyframes floatFood {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-6px) rotate(4deg); }
+    }
+    .animate-float-food {
+      animation: floatFood 3.5s ease-in-out infinite;
+    }
+
+    /* Flame Pulse Animation */
+    @keyframes flamePulse {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px rgba(234, 88, 12, 0.6)); }
+      50% { transform: scale(1.08); filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.9)); }
+    }
+    .animate-flame {
+      animation: flamePulse 1.8s ease-in-out infinite;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #ea580c; border-radius: 9999px; }
+    .dark ::-webkit-scrollbar-thumb { background: #9a3412; }
+
+    /* Card Glow Hover Effect */
+    .foodie-card-glow {
+      transition: all 0.3s ease;
+    }
+    .foodie-card-glow:hover {
+      box-shadow: 0 10px 25px -5px rgba(234, 88, 12, 0.25), 0 8px 10px -6px rgba(245, 158, 11, 0.2);
+      transform: translateY(-3px);
+    }
+  </style>
+
+  <!-- Synchronous Core Script for Theme, Translations & Auth -->
+  <script>
+    // Dictionary Translation Store
+    const i18nDict = {
+      en: {
+        brandName: "Hotel Shauryawada",
+        tagline: "Royal Indian Non-Veg Dining",
+        authTitle: "Hotel Shauryawada Portal Access",
+        authSub: "Select your operating portal to access the system.",
+        custPortal: "Customer App",
+        custSub: "Biryani Menu, Cart & QR Billing",
+        staffPortal: "Staff App",
+        staffSub: "Bhatti KDS & Stock Levels",
+        adminPortal: "Admin Portal",
+        adminSub: "Rupee Revenue & Ledger",
+        openPortal: "Open Portal",
+        heroTitle: "Satisfy Your Royal Desi Cravings",
+        heroSub: "Select table, order charcoal kebabs & Hyderabadi dum biryani with live QR billing in ₹ (INR).",
+        digitalQr: "Royal Non-Veg Feast",
+        viewBasket: "View Basket",
+        searchPlaceholder: "Search biryani, kebabs...",
+        subtotal: "Subtotal",
+        tax: "GST Tax (5%)",
+        totalPayable: "Total Payable",
+        confirmOrder: "Confirm & Send Order to Kitchen",
+        kdsTitle: "Tandoori Bhatti KDS",
+        kdsSub: "Live incoming food orders from customer table devices.",
+        stockTitle: "Desi Kitchen Stock Inventory",
+        stockSub: "Update stock counts. Zero stock automatically disables menu ordering.",
+        salesTitle: "Sales & Revenue Analytics (₹ INR)",
+        salesSub: "Explore historical sales in Indian Rupees for any date or 7-day period.",
+        grossRev: "Gross Rev (₹)",
+        netProfit: "Est. Net Profit (65%)",
+        aov: "Average Ticket (AOV)",
+        ordersSettled: "Orders Settled",
+        tableTurnover: "Table Turnover",
+        gstLiability: "GST Tax (5%)",
+        menuTab: "Menu & Order",
+        billTab: "Bill Scanner",
+        kdsTab: "Bhatti KDS",
+        stockTab: "Food Stock",
+        analyticsTab: "Sales Analytics",
+        reviewsTab: "Review Queue",
+        switchPortal: "Switch Portal",
+        custMode: "Customer Mode",
+        staffMode: "Kitchen Staff Portal",
+        adminMode: "Full Admin Console"
+      },
+      hi: {
+        brandName: "होटल शौर्यावाडा",
+        tagline: "शाही भारतीय नॉन-वेज दावत",
+        authTitle: "होटल शौर्यावाडा पोर्टल पहुंच",
+        authSub: "सिस्टम तक पहुँचने के लिए अपना संचालन पोर्टल चुनें।",
+        custPortal: "ग्राहक ऐप",
+        custSub: "बिरयानी मेनू, कार्ट और क्यूआर बिलिंग",
+        staffPortal: "स्टाफ ऐप",
+        staffSub: "भट्टी केडीएस और स्टॉक स्तर",
+        adminPortal: "एडमिन पोर्टल",
+        adminSub: "रुपया राजस्व और लेजर",
+        openPortal: "पोर्टल खोलें",
+        heroTitle: "शाही देशी जायके का आनंद लें",
+        heroSub: "टेबल चुनें, अंगार कबाब और हैदराबादी दम बिरयानी का मज़ा लें। ₹ (INR) में लाइव बिलिंग।",
+        digitalQr: "शाही नॉन-वेज दावत",
+        viewBasket: "बास्केट देखें",
+        searchPlaceholder: "बिरयानी, कबाब खोजें...",
+        subtotal: "उप-योग",
+        tax: "जीएसटी कर (5%)",
+        totalPayable: "कुल देय राशि",
+        confirmOrder: "पुष्टि करें और रसोई में भेजें",
+        kdsTitle: "तंदूरी भट्टी KDS",
+        kdsSub: "ग्राहक टेबल उपकरणों से लाइव आने वाले ऑर्डर।",
+        stockTitle: "देशी रसोई स्टॉक इन्वेंटरी",
+        stockSub: "स्टॉक की संख्या अपडेट करें। शून्य स्टॉक से ऑर्डर अपने आप बंद हो जाता है।",
+        salesTitle: "बिक्री और राजस्व विश्लेषण (₹ INR)",
+        salesSub: "किसी भी तिथि या 7-दिवसीय अवधि के लिए भारतीय रुपये में ऐतिहासिक बिक्री देखें।",
+        grossRev: "कुल राजस्व (₹)",
+        netProfit: "अनुमानित शुद्ध लाभ (65%)",
+        aov: "औसत टिकट (AOV)",
+        ordersSettled: "पूर्ण हुए ऑर्डर",
+        tableTurnover: "टेबल टर्नओवर",
+        gstLiability: "जीएसटी कर (5%)",
+        menuTab: "मेनू और ऑर्डर",
+        billTab: "बिल स्कैनर",
+        kdsTab: "भट्टी KDS",
+        stockTab: "रसोई स्टॉक",
+        analyticsTab: "बिक्री विश्लेषण",
+        reviewsTab: "समीक्षा कतार",
+        switchPortal: "पोर्टल बदलें",
+        custMode: "ग्राहक मोड",
+        staffMode: "किचन स्टाफ पोर्टल",
+        adminMode: "पूर्ण एडमिन कंसोल"
+      },
+      mr: {
+        brandName: "हॉटेल शौर्यावाडा",
+        tagline: "शाही मांसाहारी मेजवानी",
+        authTitle: "हॉटेल शौर्यावाडा प्रणाली",
+        authSub: "सिस्टममध्ये प्रवेश करण्यासाठी तुमची ऑपरेटिंग प्रणाली निवडा.",
+        custPortal: "ग्राहक ॲप",
+        custSub: "बिर्याणी मेनू, कार्ट आणि क्यूआर बिलिंग",
+        staffPortal: "स्टाफ ॲप",
+        staffSub: "भट्टी केडीएस आणि साठा प्रमाण",
+        adminPortal: "ॲडमिन पोर्टल",
+        adminSub: "रुपये महसूल आणि हिशोब",
+        openPortal: "पोर्टल उघडा",
+        heroTitle: "शाही अस्सल चवीचा आनंद घ्या",
+        heroSub: "टेबल निवडा, कोळशावरील कबाब आणि हैदराबादी दम बिर्याणीची चव घ्या. ₹ (INR) मध्ये बिलिंग.",
+        digitalQr: "शाही मांसाहारी थाळी",
+        viewBasket: "बास्केट पहा",
+        searchPlaceholder: "बिर्याणी, कबाब शोधा...",
+        subtotal: "एकूण रक्कम",
+        tax: "जीएसटी कर (५%)",
+        totalPayable: "एकूण देय रक्कम",
+        confirmOrder: "ऑर्डर निश्चित करा आणि किचनमध्ये पाठवा",
+        kdsTitle: "तंदूरी भट्टी KDS",
+        kdsSub: "ग्राहकांच्या टेबलवरून येणाऱ्या थेट ऑर्डर्स.",
+        stockTitle: "किचन साठा व्यवस्थापन",
+        stockSub: "साठा अद्ययावत करा. शून्य साठा असल्यास मेनू ऑर्डर आपोआप बंद होईल.",
+        salesTitle: "विक्री आणि उत्पन्न विश्लेषण (₹ INR)",
+        salesSub: "कोणत्याही तारखेची किंवा ७ दिवसांची रुपयांमधील विक्रीची आकडेवारी पहा.",
+        grossRev: "एकूण महसूल (₹)",
+        netProfit: "अंदाजित निव्वळ नफा (६५%)",
+        aov: "सरासरी बिल (AOV)",
+        ordersSettled: "पूर्ण झालेल्या ऑर्डर्स",
+        tableTurnover: "टेबल टर्नओवर",
+        gstLiability: "जीएसटी कर (५%)",
+        menuTab: "मेनू आणि ऑर्डर",
+        billTab: "बिल स्कैनर",
+        kdsTab: "भट्टी KDS",
+        stockTab: "किचन साठा",
+        analyticsTab: "विक्री विश्लेषण",
+        reviewsTab: "समीक्षा कतार",
+        switchPortal: "पोर्टल बदला",
+        custMode: "ग्राहक मोड",
+        staffMode: "किचन स्टाफ पोर्टल",
+        adminMode: "पूर्ण ॲडमिन कंसोल"
+      }
+    };
+
+    // Helper: Change Active Language
+    function setAppLanguage(lang) {
+      if (!['en', 'hi', 'mr'].includes(lang)) lang = 'en';
+      localStorage.setItem('shauryawada_lang', lang);
+      if (window.state) {
+        window.state.currentLang = lang;
+      }
+      // Update language select dropdowns
+      document.querySelectorAll('.lang-selector-dropdown').forEach(select => {
+        select.value = lang;
+      });
+      if (typeof window.refreshLanguageUI === 'function') {
+        window.refreshLanguageUI();
+      }
+    }
+
+    // Theme Toggle Handler
+    function toggleTheme() {
+      const html = document.documentElement;
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        localStorage.setItem('gourmet_theme', 'light');
+      } else {
+        html.classList.add('dark');
+        localStorage.setItem('gourmet_theme', 'dark');
+      }
+    }
+
+    // Role Security Auth Helpers
+    function promptStaffLogin() {
+      document.getElementById('auth-pin-container').classList.remove('hidden');
+      document.getElementById('auth-pin-target').value = 'staff';
+      document.getElementById('auth-pin-title').innerText = 'Enter Kitchen Staff Passcode (Default: 5678)';
+      document.getElementById('auth-pin-input').value = '';
+      document.getElementById('auth-pin-input').focus();
+    }
+
+    function promptAdminLogin() {
+      document.getElementById('auth-pin-container').classList.remove('hidden');
+      document.getElementById('auth-pin-target').value = 'admin';
+      document.getElementById('auth-pin-title').innerText = 'Enter Admin Console Passcode (Default: 1234)';
+      document.getElementById('auth-pin-input').value = '';
+      document.getElementById('auth-pin-input').focus();
+    }
+
+    function verifyPIN() {
+      const target = document.getElementById('auth-pin-target').value;
+      const pin = document.getElementById('auth-pin-input').value;
+      
+      if (target === 'staff') {
+        if (pin === '5678') {
+          window.loginToRole('staff');
+        } else {
+          alert('Incorrect Staff Passcode! (Hint: 5678)');
+        }
+      } else if (target === 'admin') {
+        if (pin === '1234') {
+          window.loginToRole('admin');
+        } else {
+          alert('Incorrect Admin Passcode! (Hint: 1234)');
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-cream-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <!-- ROLE LAUNCHER & SECURITY SCREEN -->
+  <div id="role-auth-screen" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-brand-100 dark:border-slate-800 rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-2xl text-center space-y-6 relative overflow-hidden">
+      <!-- Background Glow Accents -->
+      <div class="absolute -top-12 -right-12 w-40 h-40 bg-brand-500/10 rounded-full blur-2xl pointer-events-none"></div>
+      <div class="absolute -bottom-12 -left-12 w-40 h-40 bg-spice-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+      <div class="flex justify-between items-center">
+        <!-- Hotel Shauryawada Royal Logo Shield -->
+        <div class="flex items-center gap-3">
+          <div class="relative w-12 h-12 bg-gradient-to-tr from-brand-600 via-brand-500 to-spice-500 rounded-2xl shadow-lg shadow-brand-500/30 flex items-center justify-center border-2 border-spice-400">
+            <i class="fa-solid fa-crown text-amber-300 text-lg absolute -top-2 animate-bounce"></i>
+            <i class="fa-solid fa-drumstick-bite text-white text-xl"></i>
+          </div>
+          <div class="text-left">
+            <h2 class="font-serif font-extrabold text-xl text-slate-900 dark:text-white leading-tight" data-i18n="brandName">Hotel Shauryawada</h2>
+            <span class="text-[10px] font-bold text-brand-500 uppercase tracking-widest block" data-i18n="tagline">Royal Indian Non-Veg Dining</span>
+          </div>
+        </div>
+
+        <!-- Controls: Language Selector & Theme Toggle -->
+        <div class="flex items-center gap-2">
+          <select onchange="setAppLanguage(this.value)" class="lang-selector-dropdown bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-xs px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500 cursor-pointer">
+            <option value="en">English (EN)</option>
+            <option value="hi">Hindi (हिंदी)</option>
+            <option value="mr">Marathi (मराठी)</option>
+          </select>
+          <button onclick="toggleTheme()" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-brand-500 transition" title="Toggle Light/Dark Theme">
+            <i class="fa-solid fa-circle-half-stroke text-lg"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="text-left">
+        <h3 class="font-serif text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight" data-i18n="authTitle">Hotel Shauryawada Portal Access</h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" data-i18n="authSub">Select your operating portal to access the system.</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+        <!-- CUSTOMER APP -->
+        <button onclick="loginToRole('customer')" class="group p-4 bg-cream-100 dark:bg-slate-800/80 hover:bg-brand-50 dark:hover:bg-slate-800 border border-brand-200/50 dark:border-slate-700 rounded-2xl text-left transition duration-200 hover:border-brand-500 flex flex-col justify-between space-y-3">
+          <div class="w-10 h-10 rounded-xl bg-brand-500/15 text-brand-600 dark:text-brand-400 flex items-center justify-center font-bold text-lg group-hover:scale-110 transition">
+            <i class="fa-solid fa-mobile-screen-button"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 dark:text-white text-sm" data-i18n="custPortal">Customer App</h3>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5" data-i18n="custSub">Biryani Menu, Cart & QR Billing</p>
+          </div>
+          <span class="text-[11px] font-bold text-brand-600 dark:text-brand-400 flex items-center gap-1 group-hover:translate-x-1 transition"><span data-i18n="openPortal">Open Portal</span> <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
+        </button>
+
+        <!-- KITCHEN STAFF -->
+        <button onclick="promptStaffLogin()" class="group p-4 bg-cream-100 dark:bg-slate-800/80 hover:bg-amber-50 dark:hover:bg-slate-800 border border-amber-200/50 dark:border-slate-700 rounded-2xl text-left transition duration-200 hover:border-spice-500 flex flex-col justify-between space-y-3">
+          <div class="w-10 h-10 rounded-xl bg-spice-500/15 text-spice-600 dark:text-spice-400 flex items-center justify-center font-bold text-lg group-hover:scale-110 transition">
+            <i class="fa-solid fa-fire-burner"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 dark:text-white text-sm" data-i18n="staffPortal">Staff App</h3>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5" data-i18n="staffSub">Bhatti KDS & Stock Levels</p>
+          </div>
+          <span class="text-[11px] font-bold text-spice-600 dark:text-spice-400 flex items-center gap-1">PIN: 5678 <i class="fa-solid fa-lock text-[10px]"></i></span>
+        </button>
+
+        <!-- ADMIN CONSOLE -->
+        <button onclick="promptAdminLogin()" class="group p-4 bg-cream-100 dark:bg-slate-800/80 hover:bg-emerald-50 dark:hover:bg-slate-800 border border-emerald-200/50 dark:border-slate-700 rounded-2xl text-left transition duration-200 hover:border-emerald-500 flex flex-col justify-between space-y-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-lg group-hover:scale-110 transition">
+            <i class="fa-solid fa-chart-pie"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 dark:text-white text-sm" data-i18n="adminPortal">Admin Portal</h3>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5" data-i18n="adminSub">Rupee Revenue & Ledger</p>
+          </div>
+          <span class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">PIN: 1234 <i class="fa-solid fa-lock text-[10px]"></i></span>
+        </button>
+      </div>
+
+      <!-- PIN Auth Prompt Box -->
+      <div id="auth-pin-container" class="hidden pt-3 border-t border-slate-200 dark:border-slate-800 space-y-3">
+        <input type="hidden" id="auth-pin-target" value="">
+        <p id="auth-pin-title" class="text-xs font-bold text-slate-700 dark:text-slate-300">Enter Security Passcode</p>
+        <div class="flex gap-2 max-w-xs mx-auto">
+          <input type="password" id="auth-pin-input" placeholder="Passcode" onkeypress="if(event.key==='Enter') verifyPIN()" class="flex-1 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-center text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+          <button onclick="verifyPIN()" class="px-5 py-2 bg-brand-500 hover:bg-brand-600 text-white font-bold text-xs rounded-xl shadow-md transition">Unlock</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEADER NAVIGATION BAR -->
+  <header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200 dark:border-slate-800 transition-colors">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 gap-3">
+        
+        <!-- App Crown Logo & Title -->
+        <div class="flex items-center space-x-3">
+          <div class="relative w-10 h-10 bg-gradient-to-tr from-brand-600 via-brand-500 to-spice-500 text-white rounded-2xl shadow-md shadow-brand-500/30 flex items-center justify-center border border-spice-400">
+            <i class="fa-solid fa-crown text-amber-300 text-xs absolute -top-1 animate-pulse"></i>
+            <i class="fa-solid fa-utensils text-base"></i>
+          </div>
+          <div>
+            <h1 class="font-serif font-extrabold text-xl text-slate-900 dark:text-white leading-none" id="app-portal-title" data-i18n="brandName">Hotel Shauryawada</h1>
+            <span id="role-badge" class="text-[10px] uppercase font-extrabold tracking-wider px-2.5 py-0.5 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20 mt-1 inline-block" data-i18n="custMode">Customer Mode</span>
+          </div>
+        </div>
+
+        <!-- Role Sub-Nav Options -->
+        <nav id="app-sub-nav" class="flex space-x-1.5 bg-cream-100 dark:bg-slate-800/80 p-1 rounded-2xl text-xs overflow-x-auto max-w-full">
+          <!-- Dynamically Injected per Active Role -->
+        </nav>
+
+        <!-- Right Side Utility Controls: Language & Theme -->
+        <div class="flex items-center space-x-2">
+          <!-- Language Selection Dropdown -->
+          <select onchange="setAppLanguage(this.value)" class="lang-selector-dropdown bg-cream-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-xs px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500 cursor-pointer">
+            <option value="en">English (EN)</option>
+            <option value="hi">Hindi (हिंदी)</option>
+            <option value="mr">Marathi (मराठी)</option>
+          </select>
+
+          <!-- Dark Mode Toggle -->
+          <button onclick="toggleTheme()" class="p-2 rounded-xl bg-cream-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-brand-500 transition" title="Toggle Light/Dark Theme">
+            <i class="fa-solid fa-circle-half-stroke text-base"></i>
+          </button>
+          
+          <!-- Switch Role Button -->
+          <button onclick="logoutRole()" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-brand-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-right-from-bracket"></i> <span data-i18n="switchPortal">Switch Portal</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- TOAST NOTIFICATIONS OVERLAY -->
+  <div id="toast-container" class="fixed top-20 right-5 z-50 flex flex-col space-y-2 pointer-events-none max-w-xs w-full"></div>
+
+  <!-- MAIN VIEWPORT CONTAINER -->
+  <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6">
+
+    <!-- ================= CUSTOMER PORTAL ================= -->
+    <section id="portal-customer" class="app-portal hidden space-y-6">
+      
+      <!-- CUSTOMER SUBVIEW 1: MENU & ORDERING -->
+      <div id="cust-subview-menu" class="cust-view space-y-6">
+        
+        <!-- Foodie Hero Banner with Sizzling Smoke & Foodie Badges -->
+        <div class="bg-gradient-to-r from-brand-600 via-brand-500 to-spice-600 rounded-3xl p-6 text-white shadow-xl shadow-brand-500/15 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden">
+          <!-- Animated Background Sizzling Smoke Rays -->
+          <div class="absolute inset-0 pointer-events-none opacity-20 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-amber-300 via-transparent to-transparent"></div>
+          <div class="absolute -top-10 right-20 text-4xl opacity-30 animate-steam">💨</div>
+          <div class="absolute top-2 right-40 text-3xl opacity-30 animate-steam" style="animation-delay: 1s;">💨</div>
+
+          <div class="relative z-10">
+            <span class="bg-white/20 text-white text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 rounded-full flex items-center gap-1.5 w-fit">
+              <i class="fa-solid fa-fire text-amber-300 animate-flame"></i> <span data-i18n="digitalQr">Royal Non-Veg Feast</span>
+            </span>
+            <h2 class="font-serif text-3xl font-extrabold mt-2 flex items-center gap-2">
+              <span data-i18n="heroTitle">Satisfy Your Royal Desi Cravings</span>
+              <span class="animate-float-food inline-block">🍗</span>
+            </h2>
+            <p class="text-xs text-brand-100 mt-1 max-w-xl" data-i18n="heroSub">Select table, order charcoal kebabs & Hyderabadi dum biryani with live QR billing in ₹ (INR).</p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-3 w-full md:w-auto relative z-10">
+            <!-- Table Selection -->
+            <div class="bg-white/10 backdrop-blur-md rounded-2xl p-1.5 flex items-center gap-2 border border-white/20">
+              <i class="fa-solid fa-chair text-white pl-2"></i>
+              <select id="cust-table-select" onchange="updateSelectedTable(this.value)" class="bg-transparent text-white font-bold text-xs focus:outline-none pr-3 cursor-pointer">
+                <option value="T-01" class="text-slate-900">Table 01 (Wada Royal)</option>
+                <option value="T-02" class="text-slate-900">Table 02 (Wada Royal)</option>
+                <option value="T-03" class="text-slate-900">Table 03 (Wada Royal)</option>
+                <option value="T-04" class="text-slate-900">Table 04 (Wada Courtyard)</option>
+                <option value="T-05" class="text-slate-900">Table 05 (Wada Courtyard)</option>
+              </select>
+            </div>
+
+            <!-- Cart Trigger Modal Button -->
+            <button onclick="toggleCartDrawer()" class="bg-white text-brand-600 font-bold px-4 py-2 rounded-2xl shadow-lg hover:bg-cream-50 transition flex items-center gap-2 text-xs">
+              <i class="fa-solid fa-basket-shopping text-base text-brand-500"></i>
+              <span data-i18n="viewBasket">View Basket</span>
+              <span id="cust-cart-count-badge" class="bg-brand-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-black">0</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Categories & Search Bar -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div id="cust-category-pills" class="flex items-center gap-2 overflow-x-auto w-full sm:w-auto py-1">
+            <!-- Category Pills Injected via JS -->
+          </div>
+
+          <div class="relative w-full sm:w-64">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+            <input type="text" id="cust-search-input" onkeyup="filterMenuSearch(this.value)" placeholder="Search biryani, kebabs..." data-i18n-placeholder="searchPlaceholder" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl pl-9 pr-4 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
+          </div>
+        </div>
+
+        <!-- Indian Non-Veg Food Menu Grid -->
+        <div id="cust-food-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <!-- Food Cards Injected Here -->
+        </div>
+
+      </div>
+
+      <!-- CUSTOMER SUBVIEW 2: BILL SCANNER & CHECKOUT -->
+      <div id="cust-subview-billing" class="cust-view hidden space-y-6">
+        
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-slate-100 dark:border-slate-800">
+            <div>
+              <h2 class="font-serif text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <span>Bill Scanner & Payment Terminal</span>
+                <span class="text-brand-500 text-lg">₹</span>
+              </h2>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Select table or scan QR code to settle active bill in Indian Rupees (INR).</p>
+            </div>
+
+            <!-- Table Bill Lookup -->
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-slate-500">Select Table:</span>
+              <select id="bill-table-lookup" onchange="renderBillForTable(this.value)" class="bg-cream-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-bold px-3 py-1.5 focus:outline-none">
+                <option value="T-01">Table 01</option>
+                <option value="T-02">Table 02</option>
+                <option value="T-03">Table 03</option>
+                <option value="T-04">Table 04</option>
+                <option value="T-05">Table 05</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Active Bill Details Container -->
+          <div id="bill-details-container" class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Injected Via JS -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- LIVE APPROVED REVIEWS FOOTER TICKER -->
+      <footer class="bg-cream-100 dark:bg-slate-900 border border-brand-200/50 dark:border-slate-800 rounded-2xl p-3 overflow-hidden">
+        <div class="flex items-center gap-3">
+          <span class="bg-brand-500 text-white font-extrabold text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-lg shrink-0 flex items-center gap-1">
+            <i class="fa-solid fa-star text-amber-300"></i> Reviews
+          </span>
+          <div class="overflow-hidden w-full relative">
+            <div id="reviews-marquee" class="animate-marquee text-xs font-medium text-slate-700 dark:text-slate-300 flex gap-8">
+              <!-- Live Approved Reviews Injected Here -->
+            </div>
+          </div>
+        </div>
+      </footer>
+
+    </section>
+
+    <!-- ================= KITCHEN STAFF PORTAL ================= -->
+    <section id="portal-staff" class="app-portal hidden space-y-6">
+
+      <!-- STAFF SUBVIEW 1: KITCHEN DISPLAY SYSTEM (KDS) -->
+      <div id="staff-subview-kds" class="staff-view space-y-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+          <div>
+            <h2 class="font-serif text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2" data-i18n="kdsTitle">
+              Tandoori Bhatti KDS
+            </h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="kdsSub">Live incoming food orders from customer table devices.</p>
+          </div>
+          <div class="flex items-center gap-2 text-xs font-bold text-slate-500">
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Pending</span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Preparing</span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Ready</span>
+          </div>
+        </div>
+
+        <div id="kds-orders-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <!-- KDS Order Cards Injected Here -->
+        </div>
+      </div>
+
+      <!-- STAFF SUBVIEW 2: FOOD STOCK INVENTORY MANAGEMENT -->
+      <div id="staff-subview-inventory" class="staff-view hidden space-y-6">
+        <div class="flex justify-between items-center">
+          <div>
+            <h2 class="font-serif text-2xl font-bold text-slate-900 dark:text-white" data-i18n="stockTitle">Desi Kitchen Stock Inventory</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="stockSub">Update stock counts. Zero stock automatically disables menu ordering.</p>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-cream-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold border-b border-slate-200 dark:border-slate-700">
+                <tr>
+                  <th class="p-4">Dish Name</th>
+                  <th class="p-4">Category</th>
+                  <th class="p-4">Price (₹)</th>
+                  <th class="p-4">Stock Status</th>
+                  <th class="p-4 text-center">Adjust Quantity</th>
+                </tr>
+              </thead>
+              <tbody id="inventory-table-body" class="divide-y divide-slate-100 dark:divide-slate-800">
+                <!-- Stock Rows Injected via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ================= ADMIN PORTAL ================= -->
+    <section id="portal-admin" class="app-portal hidden space-y-6">
+
+      <!-- ADMIN SUBVIEW 1: FINANCIALS & CALENDAR SALES EXPLORER (₹ INR) -->
+      <div id="admin-subview-analytics" class="admin-view space-y-6">
+        
+        <!-- Header Controls & Calendar Date Picker -->
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div>
+            <span class="text-[10px] uppercase tracking-widest font-extrabold text-brand-500">Executive Financial Management</span>
+            <h2 class="font-serif font-extrabold text-2xl text-slate-900 dark:text-white flex items-center gap-2" data-i18n="salesTitle">
+              Sales & Revenue Analytics (₹ INR)
+            </h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5" data-i18n="salesSub">Explore historical sales in Indian Rupees for any date or 7-day period.</p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+            <!-- Mode Selector (Single Date vs Entire Week) -->
+            <div class="bg-cream-100 dark:bg-slate-800 p-1 rounded-2xl flex text-xs font-bold border border-slate-200 dark:border-slate-700">
+              <button onclick="setCalendarMode('single')" id="btn-mode-single" class="px-3 py-1.5 rounded-xl bg-brand-500 text-white shadow-sm transition">Single Date</button>
+              <button onclick="setCalendarMode('week')" id="btn-mode-week" class="px-3 py-1.5 rounded-xl text-slate-600 dark:text-slate-300 hover:text-brand-500 transition">Entire Week</button>
+            </div>
+
+            <!-- Date Picker Input -->
+            <div class="relative flex-1 sm:flex-none">
+              <input type="date" id="admin-calendar-picker" onchange="renderSalesAnalytics()" class="bg-cream-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-2xl px-3 py-1.5 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-brand-500">
+            </div>
+
+            <button onclick="exportFinancialCSV()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-2xl shadow-md flex items-center gap-1.5 transition">
+              <i class="fa-solid fa-file-csv"></i> Export INR CSV
+            </button>
+          </div>
+        </div>
+
+        <!-- Metric Cards Grid (Indian Rupee Formatting) -->
+        <div class="grid grid-cols-2 lg:grid-cols-6 gap-3.5">
+          <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-1">
+            <span class="text-[10px] uppercase font-bold text-slate-400 block" data-i18n="grossRev">Gross Rev (₹)</span>
+            <div id="kpi-gross-revenue" class="text-lg font-extrabold font-mono text-slate-900 dark:text-white">₹0.00</div>
+            <span id="kpi-period-label" class="text-[10px] text-brand-500 font-bold">Selected Date</span>
+          </div>
+
+          <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-1">
+            <span class="text-[10px] uppercase font-bold text-slate-400 block" data-i18n="netProfit">Est. Net Profit (65%)</span>
+            <div id="kpi-net-profit" class="text-lg font-extrabold font-mono text-emerald-600">₹0.00</div>
+            <span class="text-[10px] text-slate-400">After Operating Cost</span>
+          </div>
+
+          <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-1">
+            <span class="text-[10px] uppercase font-bold text-slate-400 block" data-i18n="aov">Average Ticket (AOV)</span>
+            <div id="kpi-aov" class="text-lg font-extrabold font-mono text-slate-900 dark:text-white">₹0.00</div>
+            <span class="text-[10px] text-slate-400">Per Table Ticket</span>
+          </div>
+
+          <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-1">
+            <span class="text-[10px] uppercase font-bold text-slate-400 block" data-i18n="ordersSettled">Orders Settled</span>
+            <div id="kpi-total-orders" class="text-lg font-extrabold font-mono text-slate-900 dark:text-white">0</div>
+            <span class="text-[10px] text-slate-400">Total Transactions</span>
+          </div>
+
+          <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-1">
+            <span class="text-[10px] uppercase font-bold text-slate-400 block" data-i18n="tableTurnover">Table Turnover</span>
+            <div id="kpi-turnover" class="text-lg font-extrabold font-mono text-slate-900 dark:text-white">0.0x</div>
+            <span class="text-[10px] text-slate-400">Turns / Table</span>
+          </div>
+
+          <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-1">
+            <span class="text-[10px] uppercase font-bold text-slate-400 block" data-i18n="gstLiability">GST Tax (5%)</span>
+            <div id="kpi-vat-collected" class="text-lg font-extrabold font-mono text-slate-900 dark:text-white">₹0.00</div>
+            <span class="text-[10px] text-slate-400">GST Liability</span>
+          </div>
+        </div>
+
+        <!-- Sales Visual Chart & Leaderboard -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+          <div class="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm">
+            <div class="flex justify-between items-center mb-4">
+              <div>
+                <h3 id="chart-title-text" class="font-serif text-lg font-bold text-slate-900 dark:text-white">Revenue Performance Chart (₹ INR)</h3>
+                <p class="text-[11px] text-slate-400">Visual breakdown of selected timeframe</p>
+              </div>
+            </div>
+            <div class="h-64">
+              <canvas id="salesAnalyticsChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Top Culinary Dishes Leaderboard -->
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm space-y-4">
+            <div>
+              <h3 class="font-serif text-lg font-bold text-slate-900 dark:text-white">Bestselling Non-Veg Leaderboard</h3>
+              <p class="text-[11px] text-slate-400">Highest grossing dishes by revenue in ₹</p>
+            </div>
+            <div id="menu-leaderboard-container" class="space-y-3 max-h-56 overflow-y-auto pr-1">
+              <!-- Injected JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Filtered Transaction Audit Table -->
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm">
+          <div class="p-4 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+            <h3 class="font-serif text-lg font-bold text-slate-900 dark:text-white">Settlement Audit Ledger (₹)</h3>
+            <span id="ledger-range-text" class="text-xs text-brand-500 font-bold">Showing selected date records</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-cream-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold border-b border-slate-200 dark:border-slate-700">
+                <tr>
+                  <th class="p-4">Txn Ref</th>
+                  <th class="p-4">Date & Time</th>
+                  <th class="p-4">Table</th>
+                  <th class="p-4">Payment Method</th>
+                  <th class="p-4 text-right">Settled Amount (₹)</th>
+                </tr>
+              </thead>
+              <tbody id="sales-table-body" class="divide-y divide-slate-100 dark:divide-slate-800">
+                <!-- Transaction rows injected JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ADMIN SUBVIEW 2: REVIEW MODERATION QUEUE -->
+      <div id="admin-subview-reviews" class="admin-view hidden space-y-6">
+        <div>
+          <h2 class="font-serif text-2xl font-bold text-slate-900 dark:text-white">Customer Review Moderation</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Approve customer feedback to feature it on the live marquee ticker.</p>
+        </div>
+
+        <div id="admin-reviews-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Review Moderation Cards Injected Here -->
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- CUSTOMER CART MODAL / DRAWER -->
+  <div id="cust-cart-drawer" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-[90] hidden transition-opacity">
+    <div class="fixed right-0 top-0 bottom-0 max-w-md w-full bg-white dark:bg-slate-900 shadow-2xl p-6 flex flex-col justify-between border-l border-slate-200 dark:border-slate-800">
+      <div>
+        <div class="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-800">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-drumstick-bite text-brand-500"></i>
+            <h3 class="font-serif text-xl font-bold text-slate-900 dark:text-white" data-i18n="viewBasket">Your Food Basket</h3>
+          </div>
+          <button onclick="toggleCartDrawer()" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-white">
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+
+        <!-- Cart List -->
+        <div id="cust-cart-items-list" class="divide-y divide-slate-100 dark:divide-slate-800 overflow-y-auto max-h-[calc(100vh-280px)] my-4">
+          <!-- Cart Items Injected JS -->
+        </div>
+      </div>
+
+      <!-- Cart Summary & Checkout -->
+      <div class="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+        <div class="space-y-1 text-xs">
+          <div class="flex justify-between text-slate-500">
+            <span data-i18n="subtotal">Subtotal</span>
+            <span id="cart-subtotal">₹0.00</span>
+          </div>
+          <div class="flex justify-between text-slate-500">
+            <span data-i18n="tax">GST Tax (5%)</span>
+            <span id="cart-tax">₹0.00</span>
+          </div>
+          <div class="flex justify-between text-base font-bold text-slate-900 dark:text-white pt-2 border-t border-slate-100 dark:border-slate-800">
+            <span data-i18n="totalPayable">Total Payable</span>
+            <span id="cart-total" class="text-brand-500">₹0.00</span>
+          </div>
+        </div>
+
+        <button onclick="submitOrderFromCart()" class="w-full py-3 bg-gradient-to-r from-brand-500 to-spice-500 hover:from-brand-600 hover:to-spice-600 text-white font-bold rounded-2xl shadow-lg shadow-brand-500/20 text-xs transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-paper-plane"></i> <span data-i18n="confirmOrder">Confirm & Send Order to Kitchen</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPLICATION LOGIC & REALTIME DATA ENGINE -->
+  <script type="module">
+    // BroadcastChannel Multi-Tab Synchronization Setup
+    const broadcastChannel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('shauryawada_realtime_sync') : null;
+
+    // Currency Formatting Utility for Indian Rupee (₹ / INR)
+    window.formatINR = function(amount) {
+      return new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
+        maximumFractionDigits: 2
+      }).format(amount);
+    };
+
+    // Authentic Indian Non-Veg Menu & Initial Seed Data in INR (₹)
+    const defaultData = {
+      activeRole: null,
+      currentLang: localStorage.getItem('shauryawada_lang') || 'en',
+      currentSubView: 'cust-subview-menu',
+      selectedTable: 'T-01',
+      calendarMode: 'single', // 'single' or 'week'
+      selectedDate: new Date().toISOString().split('T')[0],
+      menu: [
+        { id: 1, name: 'Hyderabadi Dum Biryani', category: 'Biryani', price: 340.00, stock: 18, desc: 'Aromatic basmati rice cooked with succulent spiced chicken drumsticks on slow dum', badge: '🔥 Chef Signature', image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=400&q=80' },
+        { id: 2, name: 'Tandoori Seekh Kebab', category: 'Starters', price: 290.00, stock: 12, desc: 'Minced spiced mutton skewer grilled over hot clay tandoor charcoal', badge: '🍢 Charcoal Grilled', image: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?auto=format&fit=crop&w=400&q=80' },
+        { id: 3, name: 'Butter Chicken (Boneless)', category: 'Curries', price: 380.00, stock: 15, desc: 'Tender tandoori chicken simmered in rich creamy tomato cashew gravy with fenugreek', badge: '👑 Royal Specialty', image: 'https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?auto=format&fit=crop&w=400&q=80' },
+        { id: 4, name: 'Mutton Rogan Josh', category: 'Curries', price: 440.00, stock: 8, desc: 'Kashmiri style tender lamb curry infused with whole spices and ratanjot gravy', badge: '🌶️ Fiery Hot', image: 'https://images.unsplash.com/photo-1545247181-516773cae754?auto=format&fit=crop&w=400&q=80' },
+        { id: 5, name: 'Kolhapuri Prawn Fry', category: 'Starters', price: 410.00, stock: 10, desc: 'Juicy prawns tossed in roasted Kolhapuri spicy masala and curry leaves', badge: '🌶️ Fiery Hot', image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=400&q=80' },
+        { id: 6, name: 'Shahi Tukda & Phirni', category: 'Desserts', price: 160.00, stock: 14, desc: 'Golden crispy fried bread soaked in saffron rabri topped with pistachios', badge: '✨ Sweet Sensation', image: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=400&q=80' },
+        { id: 7, name: 'Mango Lassi & Masala Chaas', category: 'Beverages', price: 90.00, stock: 25, desc: 'Chilled Alphonso mango yogurt drink served in clay kulhad', badge: '🥛 Refreshing', image: 'https://images.unsplash.com/photo-1571006682860-03595f564771?auto=format&fit=crop&w=400&q=80' }
+      ],
+      cart: [],
+      selectedCategory: 'All',
+      selectedPayMethod: 'upi',
+      orders: [
+        {
+          id: 'ORD-101',
+          tableNo: 'T-01',
+          items: [{ id: 1, name: 'Hyderabadi Dum Biryani', price: 340.00, qty: 2 }],
+          subtotal: 680.00,
+          tax: 34.00,
+          total: 714.00,
+          status: 'Preparing',
+          isPaid: false,
+          timestamp: '01:15 PM'
+        }
+      ],
+      reviews: [
+        { id: 1, author: 'Rajesh P.', rating: 5, comment: 'The Hyderabadi Dum Biryani was incredible! Charcoal flavor is top notch.', status: 'Approved' },
+        { id: 2, author: 'Ananya S.', rating: 5, comment: 'Fast QR billing and wonderful Tandoori Seekh Kebabs.', status: 'Approved' }
+      ],
+      salesHistory: [
+        { id: 'TXN-901', date: new Date().toISOString().split('T')[0], timestamp: '11:15 AM', tableNo: 'T-02', amount: 1120.00, method: 'UPI' },
+        { id: 'TXN-902', date: new Date().toISOString().split('T')[0], timestamp: '12:05 PM', tableNo: 'T-04', amount: 840.00, method: 'CARD' },
+        { id: 'TXN-801', date: '2026-10-28', timestamp: '01:30 PM', tableNo: 'T-01', amount: 2450.00, method: 'UPI' },
+        { id: 'TXN-802', date: '2026-10-27', timestamp: '07:45 PM', tableNo: 'T-03', amount: 1890.00, method: 'CASH' },
+        { id: 'TXN-701', date: '2026-10-20', timestamp: '06:15 PM', tableNo: 'T-05', amount: 3200.00, method: 'CARD' }
+      ]
+    };
+
+    // Global State Initializer
+    window.state = JSON.parse(localStorage.getItem('shauryawada_foodie_db')) || defaultData;
+    window.state.currentLang = localStorage.getItem('shauryawada_lang') || 'en';
+
+    function saveState(notifyBroadcast = true) {
+      localStorage.setItem('shauryawada_foodie_db', JSON.stringify(window.state));
+      if (notifyBroadcast && broadcastChannel) {
+        broadcastChannel.postMessage({ type: 'STATE_UPDATE', payload: window.state });
+      }
+    }
+
+    // Dynamic UI Language Refresh Engine
+    window.refreshLanguageUI = function() {
+      const lang = localStorage.getItem('shauryawada_lang') || 'en';
+      const dict = i18nDict[lang] || i18nDict.en;
+
+      // Update all elements with data-i18n
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key]) {
+          el.innerText = dict[key];
+        }
+      });
+
+      // Update placeholders
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (dict[key]) {
+          el.placeholder = dict[key];
+        }
+      });
+
+      // Update Sub-nav buttons text
+      renderRoleSubNav();
+      refreshActiveView();
+    };
+
+    // Broadcast Listening for Multi-Window Real-time Sync
+    if (broadcastChannel) {
+      broadcastChannel.onmessage = (e) => {
+        if (e.data && e.data.type === 'STATE_UPDATE') {
+          const fresh = e.data.payload;
+          window.state.menu = fresh.menu;
+          window.state.orders = fresh.orders;
+          window.state.reviews = fresh.reviews;
+          window.state.salesHistory = fresh.salesHistory;
+          refreshActiveView();
+          showToast('Updated live from synchronized portal!', 'info');
+        }
+      };
+    }
+
+    // Role Sub-Nav Definitions
+    const roleSubNavs = {
+      customer: [
+        { id: 'cust-subview-menu', labelKey: 'menuTab', icon: 'fa-utensils' },
+        { id: 'cust-subview-billing', labelKey: 'billTab', icon: 'fa-receipt' }
+      ],
+      staff: [
+        { id: 'staff-subview-kds', labelKey: 'kdsTab', icon: 'fa-fire-burner' },
+        { id: 'staff-subview-inventory', labelKey: 'stockTab', icon: 'fa-boxes-stacked' }
+      ],
+      admin: [
+        { id: 'admin-subview-analytics', labelKey: 'analyticsTab', icon: 'fa-chart-pie' },
+        { id: 'admin-subview-reviews', labelKey: 'reviewsTab', icon: 'fa-star-half-stroke' },
+        { id: 'staff-subview-kds', labelKey: 'kdsTab', icon: 'fa-fire-burner' },
+        { id: 'staff-subview-inventory', labelKey: 'stockTab', icon: 'fa-boxes-stacked' }
+      ]
+    };
+
+    window.loginToRole = function(role) {
+      window.state.activeRole = role;
+      document.getElementById('role-auth-screen').classList.add('hidden');
+      document.getElementById('auth-pin-container').classList.add('hidden');
+
+      const titleEl = document.getElementById('app-portal-title');
+      const badgeEl = document.getElementById('role-badge');
+      const lang = window.state.currentLang || 'en';
+      const dict = i18nDict[lang] || i18nDict.en;
+
+      if (role === 'customer') {
+        titleEl.innerText = "Hotel Shauryawada Customer";
+        badgeEl.className = "text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20";
+        badgeEl.innerText = dict.custMode;
+      } else if (role === 'staff') {
+        titleEl.innerText = "Hotel Shauryawada Staff";
+        badgeEl.className = "text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-spice-500/10 text-spice-600 dark:text-spice-400 border border-spice-500/20";
+        badgeEl.innerText = dict.staffMode;
+      } else if (role === 'admin') {
+        titleEl.innerText = "Hotel Shauryawada Admin";
+        badgeEl.className = "text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20";
+        badgeEl.innerText = dict.adminMode;
+      }
+
+      document.querySelectorAll('.app-portal').forEach(p => p.classList.add('hidden'));
+
+      if (role === 'customer') {
+        document.getElementById('portal-customer').classList.remove('hidden');
+      } else if (role === 'staff') {
+        document.getElementById('portal-staff').classList.remove('hidden');
+      } else if (role === 'admin') {
+        document.getElementById('portal-admin').classList.remove('hidden');
+        document.getElementById('portal-staff').classList.remove('hidden');
+      }
+
+      renderRoleSubNav();
+      const firstTab = roleSubNavs[role][0].id;
+      window.switchSubView(firstTab);
+      saveState(false);
+    };
+
+    window.logoutRole = function() {
+      window.state.activeRole = null;
+      document.getElementById('role-auth-screen').classList.remove('hidden');
+    };
+
+    function renderRoleSubNav() {
+      const role = window.state.activeRole;
+      const container = document.getElementById('app-sub-nav');
+      if (!role || !container) return;
+
+      const lang = window.state.currentLang || 'en';
+      const dict = i18nDict[lang] || i18nDict.en;
+      const tabs = roleSubNavs[role] || [];
+
+      container.innerHTML = tabs.map(t => `
+        <button onclick="switchSubView('${t.id}')" id="subnav-${t.id}" class="sub-nav-btn px-3 py-1.5 rounded-xl font-bold text-slate-600 dark:text-slate-300 hover:text-brand-500 transition flex items-center gap-1.5">
+          <i class="fa-solid ${t.icon}"></i> ${dict[t.labelKey] || t.labelKey}
+        </button>
+      `).join('');
+    }
+
+    window.switchSubView = function(subViewId) {
+      window.state.currentSubView = subViewId;
+      document.querySelectorAll('.cust-view, .staff-view, .admin-view').forEach(v => v.classList.add('hidden'));
+      document.querySelectorAll('.sub-nav-btn').forEach(b => b.classList.remove('bg-brand-500', 'text-white', 'shadow-md'));
+
+      const target = document.getElementById(subViewId);
+      if (target) target.classList.remove('hidden');
+
+      const btn = document.getElementById(`subnav-${subViewId}`);
+      if (btn) btn.classList.add('bg-brand-500', 'text-white', 'shadow-md');
+
+      refreshActiveView();
+    };
+
+    function refreshActiveView() {
+      renderCategoryPills();
+      renderUserMenu();
+      renderCartDrawer();
+      renderKitchenDashboard();
+      renderInventoryTable();
+      renderBillScanner();
+      renderApprovedReviewsTicker();
+      renderReviewsAdmin();
+      renderSalesAnalytics();
+    }
+
+    // ================= CUSTOMER MENU RENDERER =================
+    function renderCategoryPills() {
+      const categories = ['All', 'Biryani', 'Starters', 'Curries', 'Desserts', 'Beverages'];
+      const container = document.getElementById('cust-category-pills');
+      if (!container) return;
+
+      container.innerHTML = categories.map(cat => {
+        const active = window.state.selectedCategory === cat;
+        return `
+          <button onclick="selectCategory('${cat}')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition shrink-0 ${
+            active 
+              ? 'bg-brand-500 text-white shadow-md shadow-brand-500/20' 
+              : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-brand-500 border border-slate-200 dark:border-slate-800'
+          }">
+            ${cat}
+          </button>
+        `;
+      }).join('');
+    }
+
+    window.selectCategory = function(cat) {
+      window.state.selectedCategory = cat;
+      renderCategoryPills();
+      renderUserMenu();
+    };
+
+    window.filterMenuSearch = function(query) {
+      renderUserMenu(query.toLowerCase());
+    };
+
+    function renderUserMenu(searchQuery = '') {
+      const grid = document.getElementById('cust-food-grid');
+      if (!grid) return;
+
+      let filtered = window.state.menu;
+      if (window.state.selectedCategory !== 'All') {
+        filtered = filtered.filter(item => item.category === window.state.selectedCategory);
+      }
+      if (searchQuery) {
+        filtered = filtered.filter(item => item.name.toLowerCase().includes(searchQuery) || item.desc.toLowerCase().includes(searchQuery));
+      }
+
+      grid.innerHTML = filtered.map(item => {
+        const outOfStock = item.stock <= 0;
+        return `
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm foodie-card-glow flex flex-col justify-between group">
+            <div>
+              <div class="relative h-44 overflow-hidden bg-slate-100 dark:bg-slate-800">
+                <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300 ${outOfStock ? 'grayscale opacity-60' : ''}">
+                <div class="absolute top-3 left-3">
+                  <span class="bg-slate-950/75 backdrop-blur-md text-amber-300 text-[10px] font-bold px-2.5 py-1 rounded-full border border-amber-400/30">${item.badge}</span>
+                </div>
+                <div class="absolute top-3 right-3">
+                  <span class="text-[10px] font-extrabold px-2.5 py-1 rounded-full ${outOfStock ? 'bg-red-500 text-white' : 'bg-emerald-500/90 backdrop-blur-md text-white'}">
+                    ${outOfStock ? 'Out of Stock' : `${item.stock} Available`}
+                  </span>
+                </div>
+              </div>
+
+              <div class="p-4 space-y-1.5">
+                <div class="flex justify-between items-start">
+                  <h3 class="font-serif font-bold text-base text-slate-900 dark:text-white">${item.name}</h3>
+                  <span class="font-bold text-brand-500 text-sm">${window.formatINR(item.price)}</span>
+                </div>
+                <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">${item.desc}</p>
+              </div>
+            </div>
+
+            <div class="p-4 pt-0">
+              <button onclick="addToCart(${item.id})" ${outOfStock ? 'disabled' : ''} class="w-full py-2.5 rounded-2xl text-xs font-bold transition flex items-center justify-center gap-2 ${
+                outOfStock 
+                  ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed' 
+                  : 'bg-brand-500 hover:bg-brand-600 text-white shadow-md shadow-brand-500/20'
+              }">
+                <i class="fa-solid fa-plus"></i> ${outOfStock ? 'Unavailable' : 'Add to Basket'}
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ================= CART CONTROLLER =================
+    window.updateSelectedTable = function(val) {
+      window.state.selectedTable = val;
+      saveState(false);
+    };
+
+    window.toggleCartDrawer = function() {
+      const drawer = document.getElementById('cust-cart-drawer');
+      if (drawer) drawer.classList.toggle('hidden');
+    };
+
+    window.addToCart = function(itemId) {
+      const item = window.state.menu.find(m => m.id === itemId);
+      if (!item || item.stock <= 0) return;
+
+      const inCart = window.state.cart.find(c => c.id === itemId);
+      if (inCart) {
+        if (inCart.qty < item.stock) {
+          inCart.qty += 1;
+        } else {
+          showToast(`Max stock reached for ${item.name}`, 'warning');
+          return;
+        }
+      } else {
+        window.state.cart.push({ id: item.id, name: item.name, price: item.price, qty: 1 });
+      }
+
+      saveState(false);
+      renderCartDrawer();
+      showToast(`Added ${item.name} to basket!`, 'success');
+    };
+
+    window.updateCartQty = function(itemId, delta) {
+      const index = window.state.cart.findIndex(c => c.id === itemId);
+      if (index === -1) return;
+
+      const item = window.state.menu.find(m => m.id === itemId);
+      const cartItem = window.state.cart[index];
+
+      if (delta > 0 && cartItem.qty >= item.stock) {
+        showToast(`Stock limit reached for ${item.name}`, 'warning');
+        return;
+      }
+
+      cartItem.qty += delta;
+      if (cartItem.qty <= 0) {
+        window.state.cart.splice(index, 1);
+      }
+
+      saveState(false);
+      renderCartDrawer();
+    };
+
+    function renderCartDrawer() {
+      const list = document.getElementById('cust-cart-items-list');
+      const badge = document.getElementById('cust-cart-count-badge');
+      if (!list) return;
+
+      const totalItems = window.state.cart.reduce((sum, i) => sum + i.qty, 0);
+      if (badge) badge.innerText = totalItems;
+
+      if (window.state.cart.length === 0) {
+        list.innerHTML = `
+          <div class="text-center py-12 text-slate-400 space-y-2">
+            <i class="fa-solid fa-drumstick-bite text-3xl text-slate-300 dark:text-slate-700"></i>
+            <p class="text-xs">Your basket is currently empty.</p>
+          </div>
+        `;
+      } else {
+        list.innerHTML = window.state.cart.map(i => `
+          <div class="py-3 flex justify-between items-center">
+            <div>
+              <h4 class="font-bold text-xs text-slate-900 dark:text-white">${i.name}</h4>
+              <span class="text-[11px] text-brand-500 font-bold">${window.formatINR(i.price * i.qty)}</span>
+            </div>
+            <div class="flex items-center gap-2 bg-cream-100 dark:bg-slate-800 p-1 rounded-xl">
+              <button onclick="updateCartQty(${i.id}, -1)" class="w-6 h-6 rounded-lg bg-white dark:bg-slate-700 text-xs font-bold text-slate-600 dark:text-slate-200 flex items-center justify-center">-</button>
+              <span class="text-xs font-bold w-4 text-center">${i.qty}</span>
+              <button onclick="updateCartQty(${i.id}, 1)" class="w-6 h-6 rounded-lg bg-white dark:bg-slate-700 text-xs font-bold text-slate-600 dark:text-slate-200 flex items-center justify-center">+</button>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      const subtotal = window.state.cart.reduce((s, i) => s + (i.price * i.qty), 0);
+      const tax = subtotal * 0.05; // 5% GST
+      const total = subtotal + tax;
+
+      document.getElementById('cart-subtotal').innerText = window.formatINR(subtotal);
+      document.getElementById('cart-tax').innerText = window.formatINR(tax);
+      document.getElementById('cart-total').innerText = window.formatINR(total);
+    }
+
+    window.submitOrderFromCart = function() {
+      if (window.state.cart.length === 0) {
+        showToast('Your basket is empty!', 'warning');
+        return;
+      }
+
+      const table = window.state.selectedTable;
+      const subtotal = window.state.cart.reduce((s, i) => s + (i.price * i.qty), 0);
+      const tax = subtotal * 0.05;
+      const total = subtotal + tax;
+
+      // Decrement Inventory Stock
+      window.state.cart.forEach(cartItem => {
+        const menuItem = window.state.menu.find(m => m.id === cartItem.id);
+        if (menuItem) menuItem.stock = Math.max(0, menuItem.stock - cartItem.qty);
+      });
+
+      const newOrder = {
+        id: `ORD-${Math.floor(100 + Math.random() * 900)}`,
+        tableNo: table,
+        items: [...window.state.cart],
+        subtotal,
+        tax,
+        total,
+        status: 'Pending',
+        isPaid: false,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      window.state.orders.unshift(newOrder);
+      window.state.cart = [];
+
+      saveState();
+      toggleCartDrawer();
+      refreshActiveView();
+      showToast(`Order ${newOrder.id} sent to Kitchen KDS!`, 'success');
+    };
+
+    // ================= KITCHEN DISPLAY SYSTEM (KDS) =================
+    function renderKitchenDashboard() {
+      const grid = document.getElementById('kds-orders-grid');
+      if (!grid) return;
+
+      if (window.state.orders.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full text-center py-12 text-slate-400 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl">
+            <i class="fa-solid fa-kitchen-set text-3xl text-slate-300 dark:text-slate-700 mb-2"></i>
+            <p class="text-xs">No active kitchen orders.</p>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = window.state.orders.map(o => {
+        let statusBg = 'bg-amber-500/10 text-amber-600 border-amber-500/20';
+        if (o.status === 'Preparing') statusBg = 'bg-blue-500/10 text-blue-600 border-blue-500/20';
+        if (o.status === 'Ready') statusBg = 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20';
+        if (o.status === 'Delivered') statusBg = 'bg-slate-100 text-slate-500 border-slate-200';
+
+        return `
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm space-y-4 flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-slate-800">
+                <div>
+                  <span class="font-serif font-bold text-lg text-slate-900 dark:text-white">${o.tableNo}</span>
+                  <span class="text-[10px] text-slate-400 block">${o.id} • ${o.timestamp}</span>
+                </div>
+                <span class="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full border ${statusBg}">
+                  ${o.status}
+                </span>
+              </div>
+
+              <div class="py-3 space-y-1.5 divide-y divide-slate-100 dark:divide-slate-800">
+                ${o.items.map(i => `
+                  <div class="pt-1.5 flex justify-between text-xs">
+                    <span class="font-bold text-slate-800 dark:text-slate-200">${i.qty}x ${i.name}</span>
+                    <span class="text-slate-400">${window.formatINR(i.price * i.qty)}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex gap-2">
+              ${o.status === 'Pending' ? `
+                <button onclick="updateOrderStatus('${o.id}', 'Preparing')" class="w-full py-2 bg-blue-500 hover:bg-blue-600 text-white font-bold text-xs rounded-xl shadow-md">
+                  Start Preparing
+                </button>
+              ` : ''}
+              ${o.status === 'Preparing' ? `
+                <button onclick="updateOrderStatus('${o.id}', 'Ready')" class="w-full py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs rounded-xl shadow-md">
+                  Mark Ready
+                </button>
+              ` : ''}
+              ${o.status === 'Ready' ? `
+                <button onclick="updateOrderStatus('${o.id}', 'Delivered')" class="w-full py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded-xl">
+                  Deliver to Table
+                </button>
+              ` : ''}
+              ${o.status === 'Delivered' ? `
+                <span class="w-full text-center py-1.5 text-xs font-bold text-slate-400">Served ✅</span>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    window.updateOrderStatus = function(orderId, status) {
+      const order = window.state.orders.find(o => o.id === orderId);
+      if (order) {
+        order.status = status;
+        saveState();
+        refreshActiveView();
+        showToast(`Order ${orderId} status set to ${status}`, 'info');
+      }
+    };
+
+    // ================= FOOD STOCK INVENTORY =================
+    function renderInventoryTable() {
+      const tbody = document.getElementById('inventory-table-body');
+      if (!tbody) return;
+
+      tbody.innerHTML = window.state.menu.map(item => `
+        <tr class="hover:bg-cream-50 dark:hover:bg-slate-800/50">
+          <td class="p-4 font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <span>${item.name}</span>
+            <span class="text-[10px] text-amber-500">${item.badge}</span>
+          </td>
+          <td class="p-4 text-slate-500">${item.category}</td>
+          <td class="p-4 text-brand-500 font-bold">${window.formatINR(item.price)}</td>
+          <td class="p-4">
+            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${
+              item.stock > 5 
+                ? 'bg-emerald-500/10 text-emerald-600' 
+                : item.stock > 0 
+                  ? 'bg-amber-500/10 text-amber-600' 
+                  : 'bg-red-500/10 text-red-600'
+            }">
+              ${item.stock > 0 ? `${item.stock} in stock` : 'Out of Stock'}
+            </span>
+          </td>
+          <td class="p-4 text-center">
+            <div class="inline-flex items-center gap-2">
+              <button onclick="adjustInventoryStock(${item.id}, -1)" class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 font-bold hover:bg-brand-500 hover:text-white transition">-</button>
+              <span class="font-bold w-6">${item.stock}</span>
+              <button onclick="adjustInventoryStock(${item.id}, 1)" class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 font-bold hover:bg-brand-500 hover:text-white transition">+</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    window.adjustInventoryStock = function(itemId, delta) {
+      const item = window.state.menu.find(m => m.id === itemId);
+      if (item) {
+        item.stock = Math.max(0, item.stock + delta);
+        saveState();
+        refreshActiveView();
+      }
+    };
+
+    // ================= BILL SCANNER & CHECKOUT =================
+    function renderBillScanner() {
+      const selectedTable = document.getElementById('bill-table-lookup')?.value || 'T-01';
+      renderBillForTable(selectedTable);
+    }
+
+    window.renderBillForTable = function(tableNo) {
+      const container = document.getElementById('bill-details-container');
+      if (!container) return;
+
+      const activeOrders = window.state.orders.filter(o => o.tableNo === tableNo && !o.isPaid);
+
+      if (activeOrders.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full text-center py-12 text-slate-400 bg-cream-50 dark:bg-slate-800/50 rounded-3xl border border-dashed border-slate-300 dark:border-slate-700">
+            <i class="fa-solid fa-receipt text-3xl mb-2 text-slate-300 dark:text-slate-600"></i>
+            <p class="text-xs font-bold">No active unpaid bills for ${tableNo}.</p>
+          </div>
+        `;
+        return;
+      }
+
+      const itemsMap = {};
+      let subtotal = 0;
+
+      activeOrders.forEach(o => {
+        subtotal += o.subtotal;
+        o.items.forEach(i => {
+          if (!itemsMap[i.name]) itemsMap[i.name] = { price: i.price, qty: 0 };
+          itemsMap[i.name].qty += i.qty;
+        });
+      });
+
+      const tax = subtotal * 0.05; // 5% GST
+      const total = subtotal + tax;
+
+      container.innerHTML = `
+        <div class="lg:col-span-2 bg-cream-50 dark:bg-slate-800/50 rounded-3xl p-5 border border-slate-200 dark:border-slate-700 space-y-4">
+          <div class="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-slate-700">
+            <h3 class="font-serif font-bold text-lg text-slate-900 dark:text-white">Active Invoice: ${tableNo}</h3>
+            <span class="text-xs font-bold text-brand-500">${activeOrders.length} Order(s)</span>
+          </div>
+
+          <div class="divide-y divide-slate-200 dark:divide-slate-700 text-xs">
+            ${Object.keys(itemsMap).map(name => `
+              <div class="py-2 flex justify-between">
+                <span>${itemsMap[name].qty}x ${name}</span>
+                <span class="font-bold">${window.formatINR(itemsMap[name].price * itemsMap[name].qty)}</span>
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="pt-3 border-t border-slate-200 dark:border-slate-700 space-y-1 text-xs">
+            <div class="flex justify-between text-slate-500"><span>Subtotal</span><span>${window.formatINR(subtotal)}</span></div>
+            <div class="flex justify-between text-slate-500"><span>GST Tax (5%)</span><span>${window.formatINR(tax)}</span></div>
+            <div class="flex justify-between text-base font-bold text-slate-900 dark:text-white pt-2"><span>Total Amount</span><span class="text-brand-500">${window.formatINR(total)}</span></div>
+          </div>
+        </div>
+
+        <div class="bg-cream-50 dark:bg-slate-800/50 rounded-3xl p-5 border border-slate-200 dark:border-slate-700 space-y-4 flex flex-col justify-between">
+          <div class="space-y-3">
+            <h3 class="font-serif font-bold text-base text-slate-900 dark:text-white">Payment Method</h3>
+            <div class="grid grid-cols-3 gap-2">
+              <button onclick="setPayMethod('upi')" id="pay-btn-upi" class="p-3 rounded-2xl border text-center transition ${window.state.selectedPayMethod === 'upi' ? 'border-brand-500 bg-brand-500/10 text-brand-500' : 'border-slate-300 dark:border-slate-700'}">
+                <i class="fa-solid fa-qrcode text-lg block mb-1"></i>
+                <span class="text-[10px] font-bold">BHIM / UPI</span>
+              </button>
+              <button onclick="setPayMethod('card')" id="pay-btn-card" class="p-3 rounded-2xl border text-center transition ${window.state.selectedPayMethod === 'card' ? 'border-brand-500 bg-brand-500/10 text-brand-500' : 'border-slate-300 dark:border-slate-700'}">
+                <i class="fa-solid fa-credit-card text-lg block mb-1"></i>
+                <span class="text-[10px] font-bold">Card</span>
+              </button>
+              <button onclick="setPayMethod('cash')" id="pay-btn-cash" class="p-3 rounded-2xl border text-center transition ${window.state.selectedPayMethod === 'cash' ? 'border-brand-500 bg-brand-500/10 text-brand-500' : 'border-slate-300 dark:border-slate-700'}">
+                <i class="fa-solid fa-money-bill-1 text-lg block mb-1"></i>
+                <span class="text-[10px] font-bold">Cash</span>
+              </button>
+            </div>
+          </div>
+
+          <button onclick="processTablePayment('${tableNo}', ${total})" class="w-full py-3 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-2xl shadow-lg shadow-brand-500/20 text-xs transition">
+            Process Payment (${window.formatINR(total)})
+          </button>
+        </div>
+      `;
+    };
+
+    window.setPayMethod = function(method) {
+      window.state.selectedPayMethod = method;
+      const selectedTable = document.getElementById('bill-table-lookup')?.value || 'T-01';
+      renderBillForTable(selectedTable);
+    };
+
+    window.processTablePayment = function(tableNo, amount) {
+      window.state.orders.forEach(o => {
+        if (o.tableNo === tableNo && !o.isPaid) {
+          o.isPaid = true;
+        }
+      });
+
+      const todayStr = new Date().toISOString().split('T')[0];
+      const newTxn = {
+        id: `TXN-${Math.floor(1000 + Math.random() * 9000)}`,
+        date: todayStr,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        tableNo,
+        amount,
+        method: window.state.selectedPayMethod.toUpperCase()
+      };
+
+      window.state.salesHistory.unshift(newTxn);
+      saveState();
+      refreshActiveView();
+      showToast(`Payment of ${window.formatINR(amount)} completed for ${tableNo}!`, 'success');
+      promptReviewModal();
+    };
+
+    function promptReviewModal() {
+      const reviewAuthor = prompt("Payment Complete! Leave a review for Hotel Shauryawada:\nYour Name:");
+      if (!reviewAuthor) return;
+      const comment = prompt("Enter your review comment:");
+      if (!comment) return;
+
+      const newReview = {
+        id: Date.now(),
+        author: reviewAuthor,
+        rating: 5,
+        comment,
+        status: 'Pending'
+      };
+
+      window.state.reviews.unshift(newReview);
+      saveState();
+      showToast("Review submitted! Sent to Admin approval queue.", "info");
+    }
+
+    // ================= REVIEWS TICKER & MODERATION =================
+    function renderApprovedReviewsTicker() {
+      const marquee = document.getElementById('reviews-marquee');
+      if (!marquee) return;
+
+      const approved = window.state.reviews.filter(r => r.status === 'Approved');
+      if (approved.length === 0) {
+        marquee.innerHTML = `<span>Welcome to Hotel Shauryawada! Experience our authentic Tandoor & Dum Biryani.</span>`;
+        return;
+      }
+
+      marquee.innerHTML = approved.map(r => `
+        <span class="inline-flex items-center gap-1.5">
+          <strong class="text-brand-500">${r.author}:</strong> "${r.comment}" ⭐⭐⭐⭐⭐
+        </span>
+      `).join('<span class="mx-4 text-slate-300">•</span>');
+    }
+
+    function renderReviewsAdmin() {
+      const list = document.getElementById('admin-reviews-list');
+      if (!list) return;
+
+      if (window.state.reviews.length === 0) {
+        list.innerHTML = `<p class="col-span-full text-center py-8 text-slate-400 text-xs">No customer reviews submitted.</p>`;
+        return;
+      }
+
+      list.innerHTML = window.state.reviews.map(r => `
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-4 shadow-sm space-y-2 flex flex-col justify-between">
+          <div>
+            <div class="flex justify-between items-center">
+              <h4 class="font-bold text-xs text-slate-900 dark:text-white">${r.author}</h4>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${r.status === 'Approved' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-amber-500/10 text-amber-600'}">
+                ${r.status}
+              </span>
+            </div>
+            <p class="text-xs text-slate-500 mt-1">"${r.comment}"</p>
+          </div>
+
+          <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex gap-2">
+            ${r.status === 'Pending' ? `
+              <button onclick="moderateReview(${r.id}, 'Approved')" class="w-full py-1.5 bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-md">Approve</button>
+              <button onclick="moderateReview(${r.id}, 'Rejected')" class="w-full py-1.5 bg-red-500 text-white font-bold text-xs rounded-xl">Reject</button>
+            ` : `
+              <span class="text-[10px] text-slate-400 font-bold">Status: ${r.status}</span>
+            `}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    window.moderateReview = function(id, status) {
+      const review = window.state.reviews.find(r => r.id === id);
+      if (review) {
+        review.status = status;
+        saveState();
+        refreshActiveView();
+        showToast(`Review ${status.toLowerCase()}!`, 'info');
+      }
+    };
+
+    // ================= ADMIN CALENDAR & SALES ANALYTICS (₹ INR) =================
+    window.setCalendarMode = function(mode) {
+      window.state.calendarMode = mode;
+      document.getElementById('btn-mode-single').className = mode === 'single' ? 'px-3 py-1.5 rounded-xl bg-brand-500 text-white shadow-sm transition' : 'px-3 py-1.5 rounded-xl text-slate-600 dark:text-slate-300 hover:text-brand-500 transition';
+      document.getElementById('btn-mode-week').className = mode === 'week' ? 'px-3 py-1.5 rounded-xl bg-brand-500 text-white shadow-sm transition' : 'px-3 py-1.5 rounded-xl text-slate-600 dark:text-slate-300 hover:text-brand-500 transition';
+      renderSalesAnalytics();
+    };
+
+    function renderSalesAnalytics() {
+      const datePicker = document.getElementById('admin-calendar-picker');
+      if (datePicker && !datePicker.value) {
+        datePicker.value = window.state.selectedDate || new Date().toISOString().split('T')[0];
+      }
+
+      const selectedDateStr = datePicker ? datePicker.value : window.state.selectedDate;
+      window.state.selectedDate = selectedDateStr;
+
+      const mode = window.state.calendarMode || 'single';
+      const history = window.state.salesHistory || [];
+
+      let filteredTxns = [];
+      let labelText = '';
+
+      if (mode === 'single') {
+        filteredTxns = history.filter(s => s.date === selectedDateStr);
+        labelText = `Selected Date: ${selectedDateStr}`;
+      } else {
+        // Entire Week starting from selectedDate
+        const start = new Date(selectedDateStr);
+        const end = new Date(start);
+        end.setDate(end.getDate() + 6);
+
+        filteredTxns = history.filter(s => {
+          const d = new Date(s.date);
+          return d >= start && d <= end;
+        });
+        labelText = `Week Range: ${selectedDateStr} to ${end.toISOString().split('T')[0]}`;
+      }
+
+      const grossRevenue = filteredTxns.reduce((acc, curr) => acc + curr.amount, 0);
+      const netProfit = grossRevenue * 0.65;
+      const totalOrdersCount = filteredTxns.length;
+      const aov = totalOrdersCount > 0 ? (grossRevenue / totalOrdersCount) : 0;
+      const turnoverRate = (totalOrdersCount / 5).toFixed(1);
+      const vatCollected = grossRevenue * 0.05;
+
+      // Update KPI DOM Elements in INR (₹)
+      document.getElementById('kpi-gross-revenue').innerText = window.formatINR(grossRevenue);
+      document.getElementById('kpi-period-label').innerText = labelText;
+      document.getElementById('kpi-net-profit').innerText = window.formatINR(netProfit);
+      document.getElementById('kpi-aov').innerText = window.formatINR(aov);
+      document.getElementById('kpi-total-orders').innerText = totalOrdersCount;
+      document.getElementById('kpi-turnover').innerText = `${turnoverRate}x`;
+      document.getElementById('kpi-vat-collected').innerText = window.formatINR(vatCollected);
+      document.getElementById('ledger-range-text').innerText = labelText;
+
+      // Render Visual Chart & Leaderboard
+      renderAnalyticsChart(selectedDateStr, mode, filteredTxns);
+      renderLeaderboard();
+
+      // Render Transaction Audit Table
+      const tbody = document.getElementById('sales-table-body');
+      if (tbody) {
+        if (filteredTxns.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400">No settled transactions recorded for this period.</td></tr>`;
+        } else {
+          tbody.innerHTML = filteredTxns.map(tx => `
+            <tr class="hover:bg-cream-50 dark:hover:bg-slate-800/50 font-medium">
+              <td class="p-4 font-mono font-bold text-brand-500">${tx.id}</td>
+              <td class="p-4 text-slate-500">${tx.date} <span class="text-[10px] opacity-75">${tx.timestamp}</span></td>
+              <td class="p-4 font-bold">${tx.tableNo}</td>
+              <td class="p-4">
+                <span class="px-2.5 py-0.5 text-[10px] font-extrabold rounded-full ${
+                  tx.method === 'CARD' ? 'bg-blue-500/10 text-blue-600' :
+                  tx.method === 'UPI' ? 'bg-purple-500/10 text-purple-600' :
+                  'bg-emerald-500/10 text-emerald-600'
+                }">${tx.method}</span>
+              </td>
+              <td class="p-4 text-right font-mono font-bold text-slate-900 dark:text-white">${window.formatINR(tx.amount)}</td>
+            </tr>
+          `).join('');
+        }
+      }
+    }
+
+    function renderAnalyticsChart(baseDateStr, mode, filteredTxns) {
+      const ctx = document.getElementById('salesAnalyticsChart')?.getContext('2d');
+      if (!ctx) return;
+
+      let labels = [];
+      let data = [];
+
+      if (mode === 'single') {
+        document.getElementById('chart-title-text').innerText = `Hourly Revenue Breakdown (${baseDateStr})`;
+        labels = ['8 AM', '10 AM', '12 PM', '2 PM', '4 PM', '6 PM', '8 PM', '10 PM'];
+        const total = filteredTxns.reduce((s, t) => s + t.amount, 0);
+        data = [total * 0.05, total * 0.1, total * 0.25, total * 0.15, total * 0.05, total * 0.2, total * 0.15, total * 0.05];
+      } else {
+        document.getElementById('chart-title-text').innerText = `7-Day Daily Revenue Distribution`;
+        const start = new Date(baseDateStr);
+        for (let i = 0; i < 7; i++) {
+          const d = new Date(start);
+          d.setDate(d.getDate() + i);
+          const dateStr = d.toISOString().split('T')[0];
+          labels.push(dateStr.slice(5)); // MM-DD
+          const daySum = filteredTxns.filter(t => t.date === dateStr).reduce((s, t) => s + t.amount, 0);
+          data.push(daySum);
+        }
+      }
+
+      if (window.salesChartInstance) {
+        window.salesChartInstance.destroy();
+      }
+
+      window.salesChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Gross Revenue (₹)',
+            data,
+            backgroundColor: '#ea580c',
+            borderRadius: 12
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true }
+          }
+        }
+      });
+    }
+
+    function renderLeaderboard() {
+      const container = document.getElementById('menu-leaderboard-container');
+      if (!container) return;
+
+      const topDishes = [
+        { name: 'Hyderabadi Dum Biryani', sold: 54, rev: 18360.00 },
+        { name: 'Butter Chicken (Boneless)', sold: 42, rev: 15960.00 },
+        { name: 'Tandoori Seekh Kebab', sold: 38, rev: 11020.00 },
+        { name: 'Kolhapuri Prawn Fry', sold: 26, rev: 10660.00 }
+      ];
+
+      container.innerHTML = topDishes.map((dish, idx) => `
+        <div class="flex items-center justify-between p-2.5 rounded-2xl bg-cream-100 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60">
+          <div class="flex items-center gap-2.5">
+            <span class="w-6 h-6 rounded-lg bg-brand-500/10 text-brand-600 dark:text-brand-400 text-xs font-bold flex items-center justify-center">#${idx + 1}</span>
+            <div>
+              <h4 class="font-bold text-xs text-slate-800 dark:text-slate-200">${dish.name}</h4>
+              <p class="text-[10px] text-slate-400">${dish.sold} orders</p>
+            </div>
+          </div>
+          <span class="font-mono font-bold text-xs text-slate-900 dark:text-white">${window.formatINR(dish.rev)}</span>
+        </div>
+      `).join('');
+    }
+
+    window.exportFinancialCSV = function() {
+      const history = window.state.salesHistory || [];
+      let csvContent = "data:text/csv;charset=utf-8,TXN_ID,Date,Time,Table_No,Payment_Method,Amount_INR\n";
+      history.forEach(tx => {
+        csvContent += `${tx.id},${tx.date},${tx.timestamp},${tx.tableNo},${tx.method},${tx.amount}\n`;
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `Hotel_Shauryawada_Financial_Report_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      showToast("Financial Ledger exported successfully as INR CSV!", "success");
+    };
+
+    // TOAST NOTIFICATIONS
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+
+      const toast = document.createElement('div');
+      toast.className = `p-3 rounded-2xl shadow-xl text-white text-xs font-bold transition-all duration-300 transform translate-x-full ${
+        type === 'success' ? 'bg-emerald-600' : type === 'warning' ? 'bg-amber-600' : 'bg-brand-500'
+      }`;
+      toast.innerText = message;
+      container.appendChild(toast);
+
+      setTimeout(() => toast.classList.remove('translate-x-full'), 10);
+      setTimeout(() => {
+        toast.classList.add('translate-x-full');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // Window Init
+    window.onload = function() {
+      // Sync language setting across dropdown selectors
+      const lang = localStorage.getItem('shauryawada_lang') || 'en';
+      setAppLanguage(lang);
+    };
+
+    // Initialize Saved Theme
+    if (localStorage.getItem('gourmet_theme') === 'dark') {
+      document.documentElement.classList.add('dark');
+    }
+  </script>
+</body>
+</html>
